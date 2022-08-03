@@ -10,10 +10,11 @@ class EditoraResourceMakeCommand extends Command
 
     protected $signature = 'make:editora-resource';
     protected $description = 'Create a new editora resource class';
-    protected $name='EditoraAAA';
+    protected $className='EditoraAAA';
     protected $nameSpace = 'App\\Filament\\Resources\\';
-    protected $pathSuffix = '/Filament/Resources';
+    protected $pathSuffix = '/Filament/Resources/';
     protected $type = 'EditoraResource';
+
     /**
      * The filesystem instance.
      *
@@ -57,7 +58,7 @@ class EditoraResourceMakeCommand extends Command
         // code is untouched. Otherwise, we will continue generating this class' files.
         if ((! $this->hasOption('force') ||
              ! $this->option('force')) &&
-             $this->alreadyExists($this->name)) 
+             $this->alreadyExists($this->className)) 
         {
             echo "File already exists, ABORTING\n";
             return false;
@@ -70,7 +71,8 @@ class EditoraResourceMakeCommand extends Command
         // stub files so that it gets the correctly formatted namespace and class name.
         $this->makeDirectory($path);
 
-        $this->files->put($path.$this->name.'.php', $this->buildClass($this->name));
+        echo "Saving file ".$path.$this->className.".php\n";
+        $this->files->put($path.$this->className.'.php', $this->buildClass($this->className));
         $info = $this->type;
         echo ($info.' created successfully.');
     }
@@ -85,7 +87,7 @@ class EditoraResourceMakeCommand extends Command
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->nameSpace.'\\', '', $this->name);
+        $class = str_replace($this->nameSpace.'\\', '', $this->className);
         return str_replace(['DummyClass', '{{ class }}', '{{class}}'], $class, $stub);
     }
 
@@ -107,7 +109,7 @@ class EditoraResourceMakeCommand extends Command
         foreach ($searches as $search) {
             $stub = str_replace(
                 $search,
-                [$this->nameSpace, $this->name, $this->name],
+                [$this->nameSpace, $this->className, $this->className],
                 $stub
             );
         }
@@ -126,7 +128,6 @@ class EditoraResourceMakeCommand extends Command
     protected function buildClass($name)
     {
         $stub = $this->files->get($this->getStub());
-
         return $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
     }    
 
@@ -138,7 +139,7 @@ class EditoraResourceMakeCommand extends Command
      */
     protected function alreadyExists()
     {
-        return $this->files->exists($this->getPath().$this->name.'.php');
+        return $this->files->exists($this->getPath().$this->className.'.php');
     }
 
     /**
