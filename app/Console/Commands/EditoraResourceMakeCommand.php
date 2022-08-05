@@ -3,169 +3,87 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use \Illuminate\Filesystem\Filesystem;
+use App\Editora\Generator\FileManager;
+use App\Editora\Generator\StubManager;
+use App\Editora\Generator\Generator;
+use Str;
 
 class EditoraResourceMakeCommand extends Command
 {
-
     protected $signature = 'make:editora-resource';
     protected $description = 'Create a new editora resource class';
-    protected $className='EditoraAAA';
-    protected $nameSpace = 'App\\Filament\\Resources\\';
-    protected $pathSuffix = '/Filament/Resources/';
-    protected $type = 'EditoraResource';
 
-    /**
-     * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
-     */
-    protected $files;
+    protected $classResourceName='EditoraPageResource';
+    protected $className='EditoraPage';
+    protected $classSlug='editora-page';
+    protected $classID=22;
+    protected $classTag='Page';
 
-    /**
-     * Create a new controller creator command instance.
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @return void
-     */
-    public function __construct(Filesystem $files)
+    private function removeOldFiles()
     {
-        parent::__construct();
-        $this->files = $files;
+        $path=app_path().config('editora-generator.resourcesPathSuffix');
+        FileManager::removeOldFiles($path, 'Editora');
+        $path=app_path().config('editora-generator.modelsPathSuffix');
+        FileManager::removeOldFiles($path);
     }
 
-    protected function getStub()
-    {
-        return app_path().'/Editora/stubs/resource.stub';
-    }
-
-    protected function getPath()
-    {
-        return app_path().$this->pathSuffix;
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return bool|null
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
     public function handle()
     {
-        // Next, We will check to see if the class already exists. If it does, we don't want
-        // to create the class and overwrite the user's code. So, we will bail out so the
-        // code is untouched. Otherwise, we will continue generating this class' files.
-        if ((! $this->hasOption('force') ||
-             ! $this->option('force')) &&
-             $this->alreadyExists($this->className)) 
-        {
-            echo "File already exists, ABORTING\n";
-            return false;
-        }
+        $this->removeOldFiles();
+        (new Generator (
+        folder: app_path().config('editora-generator.modelsPathSuffix')
+        , stubName: app_path().config('editora-generator.modelStub')
+        , fileName: $this->className."Model.php"
+        ))->replace('$classID', $this->classID)
+        ->replace('$className', $this->className.'Model')
+        ->save();
 
-        $path=$this->getPath();
+        $path=app_path().config('editora-generator.resourcesPathSuffix');
+        FileManager::createDiretoryStructure($path.$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR);
 
-        // Next, we will generate the path to the location where this class' file should get
-        // written. Then, we will build the class and make the proper replacements on the
-        // stub files so that it gets the correctly formatted namespace and class name.
-        $this->makeDirectory($path);
+        // Create
+        $stubName=app_path().config('editora-generator.createStub');
+        echo "Saving file ".$path.$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Create'.$this->className.".php with stub $stubName\n";
+        $stub=(new StubManager($stubName))
+          ->replace('$resourceName', $this->classResourceName)
+          ->replace('$className', 'Create'.$this->className)
+          ->get();
+        FileManager::save($path.$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Create'.$this->className.".php", $stub);
 
-        echo "Saving file ".$path.$this->className.".php\n";
-        $this->files->put($path.$this->className.'.php', $this->buildClass($this->className));
-        $info = $this->type;
-        echo ($info.' created successfully.');
+        // Edit
+        $stubName=app_path().config('editora-generator.editStub');
+        echo "Saving file ".$path.$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Edit'.$this->className.".php with stub $stubName\n";
+        $stub=(new StubManager($stubName))
+          ->replace('$resourceName', $this->classResourceName)
+          ->replace('$className', 'Edit'.$this->className)
+          ->get();
+        FileManager::save($path.$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'Edit'.$this->className.".php", $stub);
+   
+        // List
+        $stubName=app_path().config('editora-generator.listStub');
+        echo "Saving file ".$path.$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'List'.Str::of($this->className)->plural().".php with stub $stubName\n";
+        $stub=(new StubManager($stubName))
+          ->replace('$resourceName', $this->classResourceName)
+          ->replace('$className', 'List'.Str::of($this->className)->plural())
+          ->get();
+        FileManager::save($path.$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR.'List'.Str::of($this->className)->plural().".php", $stub);
+        
+
+        $path=app_path().config('editora-generator.resourcesPathSuffix');
+        FileManager::createDiretoryStructure($path);
+        $stubName=app_path().config('editora-generator.resourceStub');
+        echo "Saving file ".$path.$this->classResourceName.".php with stub $stubName\n";
+        $stub=(new StubManager($stubName))
+          ->replace('$classID', $this->classID)
+          ->replace('$className', $this->classResourceName)
+          ->replace('$modelName', $this->className.'Model')
+          ->replace('$crudClassName', $this->className)
+          ->replace('$classSlug', $this->classSlug)
+          ->replace('$pluralCrudClassName', Str::of($this->className)->plural())
+          ->replace($stub, '$classTag', Str::of($this->classTag)->camel())
+          ->get();
+
+        FileManager::save($path.$this->classResourceName.'.php', $stub);
+        echo ("Editora structure created successfully.\n");
     }
-
-
-    /**
-     * Replace the class name for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $name
-     * @return string
-     */
-    protected function replaceClass($stub, $name)
-    {
-        $class = str_replace($this->nameSpace.'\\', '', $this->className);
-        return str_replace(['DummyClass', '{{ class }}', '{{class}}'], $class, $stub);
-    }
-
-    /**
-     * Replace the namespace for the given stub.
-     *
-     * @param  string  $stub
-     * @param  string  $name
-     * @return $this
-     */
-    protected function replaceNamespace(&$stub, $name)
-    {
-        $searches = [
-            ['DummyNamespace', 'DummyRootNamespace', 'NamespacedDummyUserModel'],
-            ['{{ namespace }}', '{{ rootNamespace }}', '{{ namespacedUserModel }}'],
-            ['{{namespace}}', '{{rootNamespace}}', '{{namespacedUserModel}}'],
-        ];
-
-        foreach ($searches as $search) {
-            $stub = str_replace(
-                $search,
-                [$this->nameSpace, $this->className, $this->className],
-                $stub
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * Build the class with the given name.
-     *
-     * @param  string  $name
-     * @return string
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    protected function buildClass($name)
-    {
-        $stub = $this->files->get($this->getStub());
-        return $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
-    }    
-
-    /**
-     * Determine if the class already exists.
-     *
-     * @param  string  $rawName
-     * @return bool
-     */
-    protected function alreadyExists()
-    {
-        return $this->files->exists($this->getPath().$this->className.'.php');
-    }
-
-    /**
-     * Build the directory for the class if necessary.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    protected function makeDirectory($path)
-    {
-        if (! $this->files->isDirectory(dirname($path))) {
-            $this->files->makeDirectory(dirname($path), 0777, true, true);
-        }
-
-        return $path;
-    }    
-
-    /**
-     * Get the default namespace for the class.
-     *
-     * @param  string  $rootNamespace
-     * @return string
-     */
-    protected function getDefaultNamespace($rootNamespace)
-    {
-        return $rootNamespace.'\Filament\Resources';
-    }
-
 }

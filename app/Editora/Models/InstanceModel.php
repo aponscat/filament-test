@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Editora;
+namespace App\Editora\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,9 +14,8 @@ class InstanceModel extends Model
 
   use HasFactory;
 
-  public function scopeOfClass ($query, $classID)
+  public function scopeOfClass ($query)
   {
-    return $query->where('class_id', $classID);
+    return $query;
   }
-
 }

@@ -1,3 +1,21 @@
-Hola
-Gola
-Tleilaxu
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\{{ $className }}\Pages;
+use App\Filament\Resources\{{ $className }}\RelationManagers;
+use App\Editora\Models\Classes\{{ $modelName }};
+
+class {{ $className }} extends InstanceResource 
+{
+  protected static ?string $model = {{ $modelName }}::class;
+
+  public static function getPages(): array
+  {
+      return [
+          'index' => Pages\List{{ $pluralCrudClassName }}::route('/'),
+          'create' => Pages\Create{{ $crudClassName }}::route('/create'),
+          'edit' => Pages\Edit{{ $crudClassName }}::route('/{record}/edit'),
+      ];
+  } 
+}

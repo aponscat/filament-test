@@ -11,20 +11,17 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Editora\InstanceModel;
+use App\Editora\Models\InstanceModel;
 
 class InstanceResource extends Resource
 {
     protected static ?string $model = InstanceModel::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $recordTitleAttribute = 'key_fields';
 
-    protected static int $classID=22;
-
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->ofClass(self::$classID);
+        return parent::getEloquentQuery()->ofClass();
     }
 
     public static function form(Form $form): Form
