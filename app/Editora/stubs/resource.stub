@@ -9,6 +9,9 @@ use App\Editora\Models\Classes\{{ $modelName }};
 class {{ $className }} extends InstanceResource 
 {
   protected static ?string $model = {{ $modelName }}::class;
+  protected static ?string $navigationLabel = '{{ $classTitle }}';
+  protected static ?int $navigationSort = {{ $groupOrder }};
+  protected static ?string $navigationGroup = '{{ $groupName }}';
 
   public static function getPages(): array
   {
@@ -17,5 +20,5 @@ class {{ $className }} extends InstanceResource
           'create' => Pages\Create{{ $crudClassName }}::route('/create'),
           'edit' => Pages\Edit{{ $crudClassName }}::route('/{record}/edit'),
       ];
-  } 
+  }
 }

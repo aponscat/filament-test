@@ -18,4 +18,9 @@ class InstanceModel extends Model
   {
     return $query;
   }
+
+  public function class()
+  {
+    return $this->belongsTo(ClassModel::class);
+  }
 }

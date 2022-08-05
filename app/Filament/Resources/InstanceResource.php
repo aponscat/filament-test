@@ -16,6 +16,7 @@ use App\Editora\Models\InstanceModel;
 class InstanceResource extends Resource
 {
     protected static ?string $model = InstanceModel::class;
+    protected static ?string $navigationLabel = 'Editora Home';
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $recordTitleAttribute = 'key_fields';
 
@@ -45,10 +46,13 @@ class InstanceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('key_fields'),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\TextColumn::make('publishing_begins'),
-                Tables\Columns\TextColumn::make('publishing_ends'),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('key_fields')->label('Key')->sortable(),
+                Tables\Columns\TextColumn::make('class.name')->sortable(),
+                //Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')->view('editora.status'),
+                Tables\Columns\TextColumn::make('publishing_begins')->label('Begin')->view('editora.begin'),
+                Tables\Columns\TextColumn::make('publishing_ends')->label('End')->view('editora.end'),
             ])
             ->filters([
                 //
