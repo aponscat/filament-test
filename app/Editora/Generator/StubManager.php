@@ -17,9 +17,7 @@ class StubManager
 
   public function replace ($variable, $value)
   {
-    //echo "*** Replacing $variable to $value in $this->stubName\n";
     $this->stub=str_replace(["{{ $variable }}", "{{$variable}}"], $value, $this->stub);
-    //echo $this->stub."\n";
     return $this;
   }
 
