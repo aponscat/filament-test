@@ -10,6 +10,7 @@ class Generator
 
   public function __construct (private string $folder, string $stubName, private string $fileName) 
   {
+    echo "Generating file $fileName in folder $folder with stub $stubName\n";
     $this->stubManager= new StubManager($stubName);
   }
 

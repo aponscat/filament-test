@@ -13,7 +13,7 @@ class FileManager
 
     public static function save ($path, $data)
     {
-    file_put_contents($path, $data);
+        file_put_contents($path, $data);
     }
 
     public static function removeOldFiles ($path, $startingPattern=null)
