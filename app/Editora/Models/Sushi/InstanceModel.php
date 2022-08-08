@@ -14,24 +14,6 @@ class InstanceModel extends Model
 
   use \Sushi\Sushi;
   use HasFactory;
-/*
-  protected $rows = [
-      [
-          'key_fields' => 'NY',
-          'status' => 'O',
-          'publishing_begins' => '2022-01-01',
-          'publishing_ends' => null,
-          'class_id' => 22,
-      ],
-      [
-          'key_fields' => 'CA',
-          'status' => 'P',
-          'publishing_begins' => '2022-01-02',
-          'publishing_ends' => null,
-          'class_id' => 22,
-      ],
-  ];
-*/
 
   public function getRows ()
   {

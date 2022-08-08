@@ -15,18 +15,6 @@ class ClassModel extends Model
   use HasFactory;
   use \Sushi\Sushi;
 
-  /*
-  protected $rows = [
-      [
-        'id' => 22,
-        'name' => 'Page',
-      ],
-      [
-          'id' => '23',
-          'name' => 'TestClass',
-      ],
-  ];
-  */
   public function getRows ()
   {
     return json_decode(json_encode(DB::select("select * from omp_classes")), true);
