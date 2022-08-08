@@ -5,8 +5,5 @@ use App\Editora\Models\Sushi\InstanceModel;
 
 class {{ $className }} extends InstanceModel
 {
-  public function scopeOfClass ($query)
-  {
-    return $query->where('class_id', {{ $classID }});
-  }
+  protected $classFilter={{ $classID }};
 }

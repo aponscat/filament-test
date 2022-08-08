@@ -10,13 +10,14 @@ use DB;
 
 class InstanceModel extends Model
 {
-
   protected $fillable=['metadata_id'
   , 'class_id'
   , 'metadata_internal_name'
   , 'metadata_status'
   , 'metadata_publishing_begins'
   , 'metadata_publishing_ends'];
+
+  protected $classFilter=null;
 
   use \Sushi\Sushi;
   use HasFactory;
@@ -37,17 +38,22 @@ class InstanceModel extends Model
   public function getRows ()
   {
     $result=[];
-    $rows=DB::select("select * from omp_instances");
+    $conditions='';
+
+    if (!$this->classFilter)
+    {
+      $rows=DB::select("select * from omp_instances");
+    }
+    else
+    {
+      $rows=DB::select("select * from omp_instances where class_id=?", [$this->classFilter]);
+    }
+      
     foreach ($rows as $row)
     {
       $result[]=$this->getInstanceMetaData($row);
     }
     return $result;
-  }
-
-  public function scopeOfClass ($query)
-  {
-    return $query;
   }
 
   public function class()
