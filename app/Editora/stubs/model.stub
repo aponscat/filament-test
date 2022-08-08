@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Editora\Models\Classes;
-use App\Editora\Models\InstanceModel;
+namespace App\Editora\Models\Classes\Sushi;
+use App\Editora\Models\Sushi\InstanceModel;
 
 class {{ $className }} extends InstanceModel
 {

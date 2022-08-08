@@ -4,9 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\{{ $className }}\Pages;
 use App\Filament\Resources\{{ $className }}\RelationManagers;
-use App\Editora\Models\Classes\{{ $modelName }};
+use App\Editora\Models\Classes\Sushi\{{ $modelName }};
 
-class {{ $className }} extends InstanceResource 
+class {{ $className }} extends SushiInstanceResource 
 {
   protected static ?string $model = {{ $modelName }}::class;
   protected static ?string $navigationLabel = '{{ $classTitle }}';

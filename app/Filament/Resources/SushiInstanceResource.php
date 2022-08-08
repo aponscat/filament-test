@@ -24,15 +24,15 @@ class SushiInstanceResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('key_fields'),
-                Forms\Components\Select::make('status')
+                Forms\Components\TextInput::make('metadata_internal_name'),
+                Forms\Components\Select::make('metadata_status')
                   ->options([
                     'O' => 'Published'
                     , 'R' => 'In Review'
                     , 'P' => 'Pending'
                   ]),
-                Forms\Components\DateTimePicker::make('publishing_begins'),
-                Forms\Components\DateTimePicker::make('publishing_ends'),
+                Forms\Components\DateTimePicker::make('metadata_publishing_begins'),
+                Forms\Components\DateTimePicker::make('metadata_publishing_ends'),
             ])
             ->columns(1);
     }
@@ -41,12 +41,12 @@ class SushiInstanceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
-                Tables\Columns\TextColumn::make('key_fields')->label('Key')->sortable(),
+                Tables\Columns\TextColumn::make('metadata_id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('metadata_internal_name')->label('Key')->sortable(),
                 Tables\Columns\TextColumn::make('class.name')->sortable(),
-                Tables\Columns\TextColumn::make('status')->view('editora.status'),
-                Tables\Columns\TextColumn::make('publishing_begins')->label('Begin')->view('editora.begin'),
-                Tables\Columns\TextColumn::make('publishing_ends')->label('End')->view('editora.end'),
+                Tables\Columns\TextColumn::make('metadata_status')->view('editora.status'),
+                Tables\Columns\TextColumn::make('metadata_publishing_begins')->label('Begin')->view('editora.begin'),
+                Tables\Columns\TextColumn::make('metadata_publishing_ends')->label('End')->view('editora.end'),
             ])
             ->filters([
                 //

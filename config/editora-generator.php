@@ -6,7 +6,7 @@ return [
 
   # Folders
   'resourcesPathSuffix' => env('EDITORA_GENERATOR_RESOURCES_PATH_SUFFIX', '/Filament/Resources/'),
-  'modelsPathSuffix' => env('EDITORA_GENERATOR_MODELS_PATH_SUFFIX', '/Editora/Models/Classes/'),
+  'modelsPathSuffix' => env('EDITORA_GENERATOR_MODELS_PATH_SUFFIX', '/Editora/Models/Classes/Sushi/'),
 
   ## STUB files
   'modelStub' => env('EDITORA_GENERATOR_MODEL_STUB', '/Editora/stubs/model.stub'),
