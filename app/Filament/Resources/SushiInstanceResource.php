@@ -20,20 +20,29 @@ class SushiInstanceResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $recordTitleAttribute = 'key_fields';
 
+    public static function commonSchema(): array
+    {
+        return [
+            Forms\Components\Section::make('Metadata')->schema(
+                [
+                    Forms\Components\TextInput::make('metadata_internal_name'),
+                    Forms\Components\Select::make('metadata_status')
+                      ->options([
+                        'O' => 'Published'
+                        , 'R' => 'In Review'
+                        , 'P' => 'Pending'
+                      ]),
+                    Forms\Components\DateTimePicker::make('metadata_publishing_begins'),
+                    Forms\Components\DateTimePicker::make('metadata_publishing_ends'),
+                ],
+            )->collapsible(),
+        ];
+    }
+
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('metadata_internal_name'),
-                Forms\Components\Select::make('metadata_status')
-                  ->options([
-                    'O' => 'Published'
-                    , 'R' => 'In Review'
-                    , 'P' => 'Pending'
-                  ]),
-                Forms\Components\DateTimePicker::make('metadata_publishing_begins'),
-                Forms\Components\DateTimePicker::make('metadata_publishing_ends'),
-            ])
+            ->schema(self::commonSchema())
             ->columns(1);
     }
 
@@ -41,7 +50,7 @@ class SushiInstanceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('metadata_id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
                 Tables\Columns\TextColumn::make('metadata_internal_name')->label('Key')->sortable(),
                 Tables\Columns\TextColumn::make('class.name')->sortable(),
                 Tables\Columns\TextColumn::make('metadata_status')->view('editora.status'),
@@ -52,6 +61,7 @@ class SushiInstanceResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -71,6 +81,7 @@ class SushiInstanceResource extends Resource
         return [
             'index' => Pages\ListInstances::route('/'),
             'create' => Pages\CreateInstance::route('/create'),
+            'view' => Pages\ViewInstance::route('/{record}'),
             'edit' => Pages\EditInstance::route('/{record}/edit'),
         ];
     } 

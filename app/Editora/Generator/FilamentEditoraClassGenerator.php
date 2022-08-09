@@ -11,7 +11,8 @@ class FilamentEditoraClassGenerator
     private int $classID
   , private string $classTag
   , private string $groupName
-  , private int $groupOrder)
+  , private int $groupOrder
+  , private array $schema)
   {
     $this->classTitle=$classTag;
     $this->className="Editora$classTag";
@@ -48,6 +49,16 @@ class FilamentEditoraClassGenerator
       ->replace('$className', 'Create'.$this->className)
       ->save();
 
+      // View
+      (new Generator (
+      folder: app_path().config('editora-generator.resourcesPathSuffix').$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR
+      , stubName: app_path().config('editora-generator.viewStub')
+      , fileName: 'View'.$this->className.'.php'
+      ))
+      ->replace('$resourceName', $this->classResourceName)
+      ->replace('$className', 'View'.$this->className)
+      ->save();
+        
       // Edit
       (new Generator (
       folder: app_path().config('editora-generator.resourcesPathSuffix').$this->classResourceName.DIRECTORY_SEPARATOR.'Pages'.DIRECTORY_SEPARATOR
@@ -84,7 +95,26 @@ class FilamentEditoraClassGenerator
       ->replace('$classTitle', $this->classTitle)
       ->replace('$groupName', $this->groupName)
       ->replace('$groupOrder', $this->groupOrder)
+      ->replace('$schema', $this->formSchemaGenerator())
       ->save();
+  }
+
+  private function formSchemaGenerator ()
+  {
+    $result='';
+    $i=0;
+    $result.='Forms\Components\Tabs::make("Data")->tabs([';
+    foreach ($this->schema['form'] as $tab_name => $attributes)
+    {
+      $result.='Forms\Components\Tabs\Tab::make("'.$tab_name.'")->schema(
+        [
+          '.implode(",\n\t\t\t", $attributes).'
+        ],
+      ),';
+
+    }
+    $result.='])';
+    return $result;
   }
     
 }

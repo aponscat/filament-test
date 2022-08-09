@@ -2,8 +2,16 @@
 
 namespace App\Editora\Models\Classes\Sushi;
 use App\Editora\Models\Sushi\InstanceModel;
+use DB;
 
 class {{ $className }} extends InstanceModel
 {
   protected $classFilter={{ $classID }};
+
+  public function __construct(array $attributes = [])
+  {
+    parent::__construct($attributes);
+    $this->mergeFillable($this->getMergeFillable());
+  }
+
 }
